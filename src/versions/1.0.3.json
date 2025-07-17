@@ -1,0 +1,12 @@
+{
+  "id": "1.0.3",
+  "version": "1.0.3",
+  "createdAt": "2024-03-19T12:00:00.000Z",
+  "description": "Versión con título actualizado a CL-OC y mejoras en la interfaz de usuario",
+  "changes": [
+    "Cambio de título de la aplicación a CL-OC",
+    "Actualización del título en la página web",
+    "Mejoras en la interfaz de usuario del gestor de versiones",
+    "Optimización del sistema de carga de chunks"
+  ]
+} 

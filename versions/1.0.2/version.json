@@ -1,0 +1,16 @@
+{
+  "id": "1.0.2",
+  "name": "Versión 1.0.2 - Mejoras en el Gestor de Versiones",
+  "version": "1.0.2",
+  "createdAt": "2024-03-19T12:00:00.000Z",
+  "changes": [
+    "Mejorado el Gestor de Versiones con interfaz más intuitiva",
+    "Agregado confirmación antes de eliminar versiones",
+    "Implementado sistema de redirección automática a la raíz",
+    "Mejorado el manejo de errores y mensajes de usuario",
+    "Optimizado el proceso de cambio de versión",
+    "Agregado indicador visual de versión activa",
+    "Mejorada la consistencia visual de los botones",
+    "Agregado ícono de casa para la redirección automática"
+  ]
+} 

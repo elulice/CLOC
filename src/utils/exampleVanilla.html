@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ejemplo Universal Chunk & Culling (Vanilla JS)</title>
+  <style>
+    #list-container {
+      width: 300px;
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+    .item {
+      height: 40px;
+      border-bottom: 1px solid #eee;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    #output {
+      margin-top: 20px;
+      font-family: monospace;
+      background: #f9f9f9;
+      padding: 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ejemplo Universal Chunk & Culling (Vanilla JS)</h1>
+
+  <h2>useCulling (Lista Virtual)</h2>
+  <div id="list-container"></div>
+  <button id="scroll-top">Ir arriba</button>
+  <button id="scroll-bottom">Ir abajo</button>
+
+  <h2>ChunkLoader (Carga dinámica de módulo)</h2>
+  <button id="load-module">Cargar módulo dinámico</button>
+  <div id="output"></div>
+
+  <script type="module">
+    import { ChunkLoader, useCulling } from './chunkCull.js';
+
+    // --- useCulling ejemplo ---
+    const items = Array.from({ length: 1000 }, (_, i) => `Ítem #${i+1}`);
+    const container = document.getElementById('list-container');
+    const { getVisibleItems } = useCulling({ container, items, itemHeight: 40, buffer: 5 });
+
+    function renderList() {
+      const visibles = getVisibleItems();
+      container.innerHTML = visibles.map(item => `<div class="item">${item}</div>`).join('');
+    }
+    container.addEventListener('scroll', renderList);
+    renderList();
+    document.getElementById('scroll-top').onclick = () => { container.scrollTop = 0; };
+    document.getElementById('scroll-bottom').onclick = () => { container.scrollTop = container.scrollHeight; };
+
+    // --- ChunkLoader ejemplo ---
+    // Creamos un módulo de ejemplo dinámico (simulado)
+    // Guardar este archivo como 'moduloEjemplo.js' en la misma carpeta:
+    // export function saludar(nombre) { return `¡Hola, ${nombre}!`; }
+
+    const loader = new ChunkLoader({ cache: true, version: '1.0.0' });
+    document.getElementById('load-module').onclick = async () => {
+      try {
+        const mod = await loader.load('./moduloEjemplo.js');
+        const saludo = mod.saludar('Mundo');
+        document.getElementById('output').textContent = saludo;
+      } catch (e) {
+        document.getElementById('output').textContent = 'Error cargando módulo: ' + e;
+      }
+    };
+  </script>
+</body>
+</html> 
