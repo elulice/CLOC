@@ -1,4 +1,4 @@
-# Chunk
+# CLOC
 
 Librería universal para carga eficiente de módulos (Chunk Loading) y renderizado virtual (Occlusion Culling) en aplicaciones web, compatible con React y Vanilla JS.
 
