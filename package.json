@@ -1,6 +1,6 @@
 {
   "name": "chunk-loading-occlusion-culling",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.3",
   "description": "Universal library for efficient chunk loading and virtualized rendering (occlusion culling) in web applications, compatible with React and Vanilla JS.",
   "main": "src/utils/chunkCull.js",
   "module": "src/utils/chunkCull.js",
