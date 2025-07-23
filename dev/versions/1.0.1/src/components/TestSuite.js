@@ -16,7 +16,7 @@ const TestSuite = () => {
         </div>
 
         <footer className="mt-8 text-center text-gray-600 text-sm">
-          <p>Suite de Pruebas ChunkLoader - Versión 1.0.0</p>
+          <p>Suite de Pruebas ChunkLoader</p>
           <p className="mt-1">© 2024 Todos los derechos reservados</p>
         </footer>
       </div>

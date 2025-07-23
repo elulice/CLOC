@@ -111,6 +111,7 @@ function Home({ lang, texts }) {
               title={section.title[lang]}
               description={section.description[lang]}
               imageUrl={section.imageUrl}
+              texts={texts}
             />
           </ChunkLoader>
         ))}
