@@ -1,8 +1,8 @@
-# CLOC - chunk-loading-occlusion-culling (Development Environment)
+# CLOC - Chunk Loading - Occlusion Culling (Development Environment)
 
 ## Development & Demo (English)
 
-This folder contains the development environment and example app for the CLOC library.
+This folder contains the development environment and example app for CLOC - Chunk Loading - Occlusion Culling.
 
 ### How to run the development environment
 
@@ -29,11 +29,11 @@ This folder contains the development environment and example app for the CLOC li
 
 ---
 
-# CLOC - chunk-loading-occlusion-culling (Entorno de desarrollo)
+# CLOC - Chunk Loading - Occlusion Culling (Entorno de desarrollo)
 
 ## Desarrollo y demo (Español)
 
-Esta carpeta contiene el entorno de desarrollo y la app de ejemplo para la librería CLOC.
+Esta carpeta contiene el entorno de desarrollo y la app de ejemplo para CLOC - Chunk Loading - Occlusion Culling.
 
 ### Cómo levantar el entorno de desarrollo
 

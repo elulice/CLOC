@@ -42,10 +42,16 @@ class CacheManager {
       if (stored) {
         const { data, timestamp } = JSON.parse(stored);
         if (Date.now() - timestamp < chunkLoaderConfig.cache.duration) {
-          const decompressed = pako.inflate(atob(data), { to: 'string' });
-          const cacheData = JSON.parse(decompressed);
-          this.cache = new Map(Object.entries(cacheData));
-          this.notifyCacheUpdate();
+          try {
+            const decompressed = pako.inflate(atob(data), { to: 'string' });
+            const cacheData = JSON.parse(decompressed);
+            this.cache = new Map(Object.entries(cacheData));
+            this.notifyCacheUpdate();
+          } catch (decompressError) {
+            // Si falla la descompresión, limpiar la caché corrupta
+            console.warn('Corrupt cache detected, clearing persistent cache.', decompressError);
+            localStorage.removeItem(chunkLoaderConfig.cache.persistence.storageKey);
+          }
         }
       }
     } catch (error) {
@@ -59,6 +65,15 @@ class CacheManager {
 
     try {
       const cacheData = Object.fromEntries(this.cache);
+      // Validar que los valores sean serializables
+      for (const [key, value] of Object.entries(cacheData)) {
+        try {
+          JSON.stringify(value);
+        } catch (err) {
+          console.warn(`Warning: Skipping non-serializable cache entry for key '${key}'.`, err);
+          delete cacheData[key];
+        }
+      }
       const jsonString = JSON.stringify(cacheData);
       const compressed = pako.deflate(jsonString, { level: chunkLoaderConfig.performance.compression.level });
       const base64 = btoa(String.fromCharCode.apply(null, compressed));

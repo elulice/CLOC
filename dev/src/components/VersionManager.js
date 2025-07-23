@@ -21,6 +21,7 @@ const VersionManager = () => {
   const { currentVersion } = useCurrentVersion();
 
   useEffect(() => {
+    let errorShown = false;
     const initializeData = async () => {
       try {
         // Cargar preferencia de redirección
@@ -29,12 +30,7 @@ const VersionManager = () => {
           setAutoRedirect(savedAutoRedirect === 'true');
         }
 
-        // Cargar versiones
-        const data = await versionService.getAllVersions();
-        const sortedVersions = data.sort((a, b) => 
-          new Date(a.createdAt) - new Date(b.createdAt)
-        );
-        setVersions(sortedVersions);
+        await loadVersions(() => { errorShown = true; });
 
         // Establecer versión activa
         if (currentVersion) {
@@ -43,7 +39,18 @@ const VersionManager = () => {
 
         setIsInitialized(true);
       } catch (error) {
-        message.error('Error al cargar los datos');
+        const msg = (error && error.message) ? error.message : String(error);
+        if (
+          msg.includes('Corrupt cache') ||
+          msg.includes('not found') ||
+          msg.includes('cache') ||
+          msg.includes('undefined')
+        ) {
+          // Errores esperados: solo loguear
+          console.warn('Non-critical error while loading data:', error);
+        } else if (!errorShown) {
+          message.error('Error loading data');
+        }
       } finally {
         setLoading(false);
       }
@@ -57,7 +64,7 @@ const VersionManager = () => {
     localStorage.setItem('versionAutoRedirect', checked);
   };
 
-  const loadVersions = async () => {
+  const loadVersions = async (onError) => {
     try {
       const data = await versionService.getAllVersions();
       const sortedVersions = data.sort((a, b) => 
@@ -65,7 +72,8 @@ const VersionManager = () => {
       );
       setVersions(sortedVersions);
     } catch (error) {
-      message.error('Error al cargar las versiones');
+      if (onError) onError();
+      message.error('Error loading versions');
     }
   };
 
@@ -155,18 +163,61 @@ const VersionManager = () => {
     <Card
       title={
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <Text strong>Gestión de Versiones</Text>
-          <Space>
-            <Switch
-              checkedChildren={<HomeOutlined />}
-              unCheckedChildren={<HomeOutlined />}
-              checked={autoRedirect}
-              onChange={handleAutoRedirectChange}
-            />
-            <Text>
-              <HomeOutlined style={{ marginRight: 8 }} />
-              Redirección automática
-            </Text>
+          <Text strong>Version Management</Text>
+          <Space
+            direction="vertical"
+            size={0}
+            style={{
+              alignItems: 'flex-end',
+              width: '100%',
+              minWidth: 0,
+              maxWidth: '100%',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: 8,
+                width: '100%',
+                minWidth: 0,
+              }}
+            >
+              <Switch
+                checkedChildren={<HomeOutlined />}
+                unCheckedChildren={<HomeOutlined />}
+                checked={autoRedirect}
+                onChange={handleAutoRedirectChange}
+              />
+              <Text
+                style={{
+                  marginLeft: 8,
+                  fontSize: '1rem',
+                  minWidth: 0,
+                  wordBreak: 'break-word',
+                  flex: 1,
+                }}
+              >
+                <HomeOutlined style={{ marginRight: 8 }} />
+                Auto Redirect
+              </Text>
+            </div>
+            <div
+              style={{
+                fontSize: 10,
+                fontWeight: 'normal',
+                color: '#888',
+                marginTop: 2,
+                lineHeight: 1.2,
+                width: '100%',
+                textAlign: 'right',
+                wordBreak: 'break-word',
+                letterSpacing: -0.3,
+              }}
+            >
+              When switching version
+            </div>
           </Space>
         </div>
       }
@@ -178,7 +229,7 @@ const VersionManager = () => {
         onClick={() => setIsModalVisible(true)}
         style={{ marginBottom: 16 }}
       >
-        Crear Nueva Versión
+        Create New Version
       </Button>
 
       <List
@@ -206,7 +257,7 @@ const VersionManager = () => {
                     }}
                     icon={<CheckCircleOutlined />}
                   >
-                    Activa
+                    Active
                   </Button>
                 ) : (
                   <Button
@@ -219,7 +270,7 @@ const VersionManager = () => {
                       color: '#52c41a'
                     }}
                   >
-                    Activar
+                    Activate
                   </Button>
                 )}
               </div>,
@@ -230,48 +281,48 @@ const VersionManager = () => {
                   disabled={activeVersionId === version.id}
                   style={{ width: '100%' }}
                 >
-                  Eliminar
+                  Delete
                 </Button>
               </div>
             ]}
           >
             <List.Item.Meta
               title={version.name}
-              description={`Versión ${version.version}`}
+              description={`Version ${version.version}`}
             />
           </List.Item>
         )}
       />
 
       <Modal
-        title="Crear Nueva Versión"
+        title="Create New Version"
         open={isModalVisible}
         onOk={createNewVersion}
         onCancel={() => setIsModalVisible(false)}
       >
         <Input
-          placeholder="Nombre de la versión"
+          placeholder="Version name"
           value={newVersionName}
           onChange={(e) => setNewVersionName(e.target.value)}
         />
       </Modal>
 
       <Modal
-        title="Información de la Versión"
+        title="Version Info"
         open={!!selectedVersionInfo}
         onCancel={() => setSelectedVersionInfo(null)}
         footer={[
           <Button key="close" onClick={() => setSelectedVersionInfo(null)}>
-            Cerrar
+            Close
           </Button>
         ]}
       >
         {selectedVersionInfo && (
           <div>
             <h3>{selectedVersionInfo.name}</h3>
-            <p>Versión: {selectedVersionInfo.version}</p>
-            <p>Creada: {new Date(selectedVersionInfo.createdAt).toLocaleString()}</p>
-            <h4>Cambios:</h4>
+            <p>Version: {selectedVersionInfo.version}</p>
+            <p>Created: {new Date(selectedVersionInfo.createdAt).toLocaleString()}</p>
+            <h4>Changes:</h4>
             <ul>
               {renderChanges(selectedVersionInfo.changes)}
             </ul>

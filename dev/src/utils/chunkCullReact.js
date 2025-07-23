@@ -24,10 +24,7 @@ export function useChunk(importPath, { cache = true, version } = {}) {
 // useCullingReact: hook para listas virtuales en React
 export function useCullingReact(items, { itemHeight = 40, buffer = 5 } = {}) {
   const ref = useRef();
-  const [visibleItems, setVisibleItems] = useState(() => {
-    // Inicializa solo una vez
-    return items.slice(0, Math.min(items.length, buffer * 2));
-  });
+  const [range, setRange] = useState({ start: 0, end: buffer * 2, visibleItems: items.slice(0, buffer * 2) });
 
   useEffect(() => {
     function update() {
@@ -37,7 +34,7 @@ export function useCullingReact(items, { itemHeight = 40, buffer = 5 } = {}) {
       const height = container.clientHeight;
       const start = Math.max(0, Math.floor(scrollTop / itemHeight) - buffer);
       const end = Math.min(items.length, Math.ceil((scrollTop + height) / itemHeight) + buffer);
-      setVisibleItems(items.slice(start, end));
+      setRange({ start, end, visibleItems: items.slice(start, end) });
     }
     const container = ref.current;
     if (container) {
@@ -50,7 +47,7 @@ export function useCullingReact(items, { itemHeight = 40, buffer = 5 } = {}) {
     };
   }, [items, itemHeight, buffer]);
 
-  return { visibleItems, ref };
+  return { ...range, ref };
 }
 
 // Exportación por defecto para integración más sencilla en React

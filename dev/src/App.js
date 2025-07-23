@@ -10,69 +10,7 @@ import { sectionsData } from './mock/sections';
 import { clearAllCache } from './utils/cacheManager';
 import { chunkLoaderConfig } from './config/chunkLoaderConfig';
 import ExampleReact from './utils/exampleReact.js';
-
-function Navbar() {
-  const location = useLocation();
-  const { currentVersion, loading, error } = useCurrentVersion();
-  
-  return (
-    <nav className="bg-white shadow-md">
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-gray-800">CL-OC</span>
-            {!loading && !error && currentVersion && (
-              <span className="text-sm text-gray-500">v{currentVersion.version}</span>
-            )}
-          </Link>
-          
-          <div className="flex items-center space-x-8">
-            <Link
-              to="/"
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                location.pathname === '/'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              Inicio
-            </Link>
-            <Link
-              to="/versions"
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                location.pathname === '/versions'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              Versiones
-            </Link>
-            <Link
-              to="/test-suite"
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                location.pathname === '/test-suite'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              Suite de Pruebas
-            </Link>
-            <Link
-              to="/react-demo"
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                location.pathname === '/react-demo'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              Demo React
-            </Link>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
-}
+import Navbar from './components/Navbar';
 
 function Home() {
   const [loadedChunks, setLoadedChunks] = useState({});
@@ -122,7 +60,7 @@ function Home() {
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-white via-[#f9fbf9] to-[#4bff1e] p-8">
       <header className="text-center mb-16">
         <h1 className="text-6xl font-extrabold text-gray-900 mb-4 leading-tight">
           CL-OC: ChunkLoading-OcclusionCulling
@@ -196,12 +134,14 @@ function App() {
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Navbar />
         <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/versions" element={<VersionManager />} />
-            <Route path="/test-suite" element={<TestSuite />} />
-            <Route path="/react-demo" element={<ExampleReact />} />
-          </Routes>
+          <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12 break-words">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/versions" element={<VersionManager />} />
+              <Route path="/test-suite" element={<TestSuite />} />
+              <Route path="/react-demo" element={<ExampleReact />} />
+            </Routes>
+          </div>
         </main>
       </div>
     </BrowserRouter>

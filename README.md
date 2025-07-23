@@ -1,6 +1,6 @@
-# CLOC - chunk-loading-occlusion-culling (English)
+# CLOC - Chunk Loading - Occlusion Culling (English)
 
-Universal library for efficient chunk loading and virtualized rendering (occlusion culling) in web applications, compatible with React and Vanilla JS.
+CLOC - Chunk Loading - Occlusion Culling is a universal library for efficient chunk loading and virtualized rendering (occlusion culling) in web applications, compatible with React and Vanilla JS.
 
 ---
 
@@ -28,9 +28,9 @@ See documentation and examples in `src/utils/README.md`.
 
 ---
 
-# CLOC - chunk-loading-occlusion-culling (Español)
+# CLOC - Chunk Loading - Occlusion Culling (Español)
 
-Librería universal para carga eficiente de módulos (Chunk Loading) y renderizado virtual (Occlusion Culling) en aplicaciones web, compatible con React y Vanilla JS.
+CLOC - Chunk Loading - Occlusion Culling es una librería universal para carga eficiente de módulos (Chunk Loading) y renderizado virtual (Occlusion Culling) en aplicaciones web, compatible con React y Vanilla JS.
 
 ---
 
