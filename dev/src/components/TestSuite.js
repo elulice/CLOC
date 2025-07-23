@@ -1,24 +1,22 @@
 import React from 'react';
 import TestErrorHandling from './TestErrorHandling';
+import Footer from './Footer';
 
-const TestSuite = () => {
+const TestSuite = ({ lang, texts }) => {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">Suite de Pruebas ChunkLoader</h1>
+            <h1 className="text-2xl font-bold text-gray-800">{texts.testSuite.title}</h1>
           </div>
 
           <div className="border-t border-gray-200 pt-6">
-            <TestErrorHandling />
+            <TestErrorHandling lang={lang} texts={texts} />
           </div>
         </div>
 
-        <footer className="mt-8 text-center text-gray-600 text-sm">
-          <p>Suite de Pruebas ChunkLoader - Versión 1.0.0</p>
-          <p className="mt-1">© 2024 Todos los derechos reservados</p>
-        </footer>
+        <Footer lang={lang} texts={texts} />
       </div>
     </div>
   );

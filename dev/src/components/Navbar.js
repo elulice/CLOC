@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import texts from '../i18n';
 
-const Navbar = () => {
+const Navbar = ({ lang, setLang, texts }) => {
+  if (!texts || !texts.navbar) {
+    return null;
+  }
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -14,7 +18,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="text-xl font-bold text-gray-800">
-            CLOC - Chunk Loading - Occlusion Culling
+            <span className="font-bold text-2xl tracking-tight text-gray-900">CLOC</span>
           </Link>
           {/* Botón hamburguesa para móviles */}
           <button
@@ -40,7 +44,7 @@ const Navbar = () => {
               }`}
               onClick={() => setMenuOpen(false)}
             >
-              Home
+              {texts.navbar.home}
             </Link>
             <Link
               to="/test-suite"
@@ -51,7 +55,7 @@ const Navbar = () => {
               }`}
               onClick={() => setMenuOpen(false)}
             >
-              Test Suite
+              {texts.navbar.testSuite}
             </Link>
             <Link
               to="/react-demo"
@@ -62,8 +66,32 @@ const Navbar = () => {
               }`}
               onClick={() => setMenuOpen(false)}
             >
-              React Demo
+              {texts.navbar.reactDemo}
             </Link>
+            {/* Desktop */}
+            <div className="hidden md:block ml-4">
+              <select
+                value={lang}
+                onChange={e => setLang(e.target.value)}
+                className="bg-white border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none"
+                aria-label={texts.navbar.language}
+              >
+                <option value="en">English</option>
+                <option value="es">Español</option>
+              </select>
+            </div>
+            {/* Mobile (dentro del menú hamburguesa) */}
+            <div className="block md:hidden mt-2">
+              <select
+                value={lang}
+                onChange={e => setLang(e.target.value)}
+                className="bg-white border border-gray-300 rounded px-2 py-1 text-sm w-full focus:outline-none"
+                aria-label={texts.navbar.language}
+              >
+                <option value="en">English</option>
+                <option value="es">Español</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>

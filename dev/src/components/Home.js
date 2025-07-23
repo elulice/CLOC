@@ -1,42 +1,124 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import Footer from './Footer';
 import SectionContent from './SectionContent';
+import CacheStatusIndicator from './CacheStatusIndicator';
+import { sectionsData } from '../mock/sections';
+import { chunkLoaderConfig } from '../config/chunkLoaderConfig';
+import { clearAllCache } from '../utils/cacheManager';
+import ChunkLoader from './ChunkLoader';
 
-const Home = () => {
+function Home({ lang, texts }) {
+  const [loadedChunks, setLoadedChunks] = useState({});
+  const [error, setError] = useState(null);
+  const [isClearingCache, setIsClearingCache] = useState(false);
+
+  const handleChunkLoaded = (chunkId) => {
+    setLoadedChunks((prev) => ({ ...prev, [chunkId]: true }));
+    setError(null);
+  };
+
+  const handleChunkUnloaded = (chunkId) => {
+    setLoadedChunks((prev) => {
+      const newState = { ...prev };
+      delete newState[chunkId];
+      return newState;
+    });
+  };
+
+  const handleChunkError = (chunkId, error) => {
+    setError({ chunkId, message: error.message });
+    console.error(`Error en chunk ${chunkId}:`, error);
+  };
+
+  const handleClearCache = async () => {
+    try {
+      setIsClearingCache(true);
+      await clearAllCache();
+      setLoadedChunks({});
+      setError(null);
+      alert(texts.general.cacheCleared);
+    } catch (error) {
+      setError({ message: texts.general.error });
+      console.error('Error clearing cache:', error);
+    } finally {
+      setIsClearingCache(false);
+    }
+  };
+
+  useEffect(() => {
+    if (error) {
+      const timeout = setTimeout(() => {
+        setError(null);
+      }, 3000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error]);
+
+  // Aquí deberías definir sectionsData y chunkLoaderConfig o recibirlos como props
+  // Por ahora, se asume que están disponibles en el scope global o se deben importar
+
   return (
-    <div className="w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 break-words">
-      <div className="space-y-8 sm:space-y-12">
-        {/* Si hay un título exclusivo del Home, aplicar break-all y text-ellipsis */}
-        {/* <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 break-all text-ellipsis overflow-hidden">Some very long home title that should wrap or truncate</h1> */}
-        <SectionContent
-          title="Efficient Loading"
-          description="Optimize your application's performance with our smart loading system. Reduce initial load time and improve user experience."
-          imageUrl="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-        />
-
-        <SectionContent
-          title="Error Handling"
-          description="Robust error handling system that ensures a smooth experience even in adverse situations. Automatic recovery and clear notifications."
-          imageUrl="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-        />
-
-        <SectionContent
-          title="Customization"
-          description="Adapt the component to your specific needs with flexible configuration options. Full control over behavior and appearance."
-          imageUrl="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-        />
-
-        <div className="flex justify-center mt-8 sm:mt-12 w-full">
-          <Link
-            to="/test-suite"
-            className="inline-block bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl w-full sm:w-auto text-center break-all text-ellipsis overflow-hidden"
+    <div className="min-h-screen bg-gradient-to-br from-white via-[#f9fbf9] to-[#4bff1e] p-8">
+      <header className="text-center mb-16">
+        <h1 className="text-6xl font-extrabold text-gray-900 mb-4 leading-tight">
+          CLOC: ChunkLoading-OcclusionCulling
+        </h1>
+        <p className="text-2xl text-gray-700 max-w-3xl mx-auto">
+          {texts.home.headerDesc}
+        </p>
+        <div className="mt-8 flex justify-center items-center space-x-4">
+          <button
+            onClick={handleClearCache}
+            disabled={isClearingCache}
+            className={`
+              bg-red-600 text-white py-3 px-8 rounded-full 
+              transition-all duration-300 shadow-lg hover:shadow-xl
+              ${isClearingCache ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-700'}
+            `}
           >
-            View Test Suite
-          </Link>
+            {isClearingCache ? texts.general.clearing : texts.general.clearCache}
+          </button>
+          <CacheStatusIndicator lang={lang} texts={texts} />
         </div>
-      </div>
+      </header>
+
+      {error && (
+        <div className="max-w-3xl mx-auto mb-8 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          <p className="font-medium">{texts.general.error}: {error.message}</p>
+          {error.chunkId && (
+            <p className="text-sm mt-1">Chunk: {error.chunkId}</p>
+          )}
+        </div>
+      )}
+
+      <main className="space-y-20">
+        {sectionsData.map((section) => (
+          <ChunkLoader
+            key={section.id + '-' + lang}
+            chunkId={section.id}
+            onChunkLoaded={handleChunkLoaded}
+            onChunkUnloaded={handleChunkUnloaded}
+            onError={(error) => handleChunkError(section.id, error)}
+            config={{
+              ...chunkLoaderConfig,
+              observer: {
+                ...chunkLoaderConfig.observer,
+                margin: section.margin || chunkLoaderConfig.observer.margin
+              }
+            }}
+          >
+            <SectionContent
+              title={section.title[lang]}
+              description={section.description[lang]}
+              imageUrl={section.imageUrl}
+            />
+          </ChunkLoader>
+        ))}
+      </main>
+
+      <Footer lang={lang} texts={texts} />
     </div>
   );
-};
+}
 
 export default Home; 

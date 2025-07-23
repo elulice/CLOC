@@ -5,7 +5,7 @@ import { useChunk, useCullingReact } from './chunkCullReact.js';
 // Save as MiComponente.js in the same folder:
 // export default function MiComponente() { return <div>Dynamically loaded component!</div>; }
 
-export default function ExampleReact() {
+export default function ExampleReact({ lang, texts }) {
   // State for buffer and item height
   const [buffer, setBuffer] = useState(5);
   const [itemHeight, setItemHeight] = useState(40);
@@ -49,16 +49,16 @@ export default function ExampleReact() {
 
   return (
     <div style={{ fontFamily: 'sans-serif', padding: 24 }}>
-      <h1>CLOC - Chunk Loading - Occlusion Culling (React Demo)</h1>
+      <h1>{texts.exampleReact.title}</h1>
 
       <div style={{ marginBottom: 20, color: '#333', fontSize: 15, maxWidth: 600 }}>
-        <b>How does it work?</b> This virtualized list only renders the items visible in the scroll window, plus a buffer above and below for smooth scrolling. You can adjust the buffer and item height below to see how the virtualization adapts. The component efficiently handles thousands of items without performance loss.
+        <b>{texts.exampleReact.howTitle}</b> {texts.exampleReact.howDesc}
       </div>
 
-      <h2>useCullingReact (Virtual List)</h2>
+      <h2>{texts.exampleReact.virtualListTitle}</h2>
       <div style={{ marginBottom: 12 }}>
         <label>
-          Buffer:
+          {texts.exampleReact.buffer}:
           <input
             type="range"
             min={0}
@@ -70,21 +70,21 @@ export default function ExampleReact() {
           <span style={{ marginLeft: 12, fontWeight: 600 }}>{buffer}</span>
         </label>
         <span style={{ marginLeft: 24 }}>
-          Rendered items: <b>{visibleItems.length}</b>
+          {texts.exampleReact.renderedItems}: <b>{visibleItems.length}</b>
         </span>
         <div style={{ marginTop: 8, color: '#1976d2', fontWeight: 500 }}>
-          Showing items {items.length === 0 ? 0 : start + 1} to {start + visibleItems.length} of {items.length}
+          {texts.exampleReact.showingItems} {items.length === 0 ? 0 : start + 1} {texts.exampleReact.to} {start + visibleItems.length} {texts.exampleReact.of} {items.length}
         </div>
         <div style={{ marginTop: 8, color: '#555', fontSize: 14 }}>
-          Visible window: {visibleWindow} &nbsp;|&nbsp; Buffer above: {buffer} &nbsp;|&nbsp; Buffer below: {buffer} &nbsp;|&nbsp; <b>Expected total:</b> {renderedTotal}
+          {texts.exampleReact.visibleWindow}: {visibleWindow} &nbsp;|&nbsp; {texts.exampleReact.bufferAbove}: {buffer} &nbsp;|&nbsp; {texts.exampleReact.bufferBelow}: {buffer} &nbsp;|&nbsp; <b>{texts.exampleReact.expectedTotal}:</b> {renderedTotal}
           <br/>
           <span style={{ color: '#888' }}>
-            (The actual total may vary at the start and end of the list)
+            ({texts.exampleReact.actualTotalNote})
           </span>
         </div>
         <div style={{ marginTop: 16 }}>
           <label>
-            Item height:
+            {texts.exampleReact.itemHeight}:
             <input
               type="range"
               min={20}
@@ -110,7 +110,7 @@ export default function ExampleReact() {
         </div>
       </div>
 
-      <h2>useChunk (Dynamic Component Loading)</h2>
+      <h2>{texts.exampleReact.dynamicTitle}</h2>
       <button
         onClick={() => setShow(true)}
         style={{
@@ -130,10 +130,10 @@ export default function ExampleReact() {
         onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
         onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
       >
-        Load dynamic component
+        {texts.exampleReact.loadDynamic}
       </button>
       <div style={{ marginTop: 20 }}>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>{texts.exampleReact.loading}</div>}>
           {show && <MiComponente />}
         </Suspense>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Card, List, Modal, Input, message, Tag, Switch, Space, Typography } from 'antd';
-import { CopyOutlined, DeleteOutlined, SaveOutlined, CheckCircleOutlined, ReloadOutlined, ExclamationCircleOutlined, HomeOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { CopyOutlined, DeleteOutlined, SaveOutlined, CheckCircleOutlined, ReloadOutlined, ExclamationCircleOutlined, HomeOutlined, InfoCircleOutlined, CheckOutlined, SwapOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import useCurrentVersion from '../hooks/useCurrentVersion';
 import { versionService } from '../services/versionService';
@@ -8,7 +8,7 @@ import { versionService } from '../services/versionService';
 const { Text } = Typography;
 const { confirm } = Modal;
 
-const VersionManager = () => {
+const VersionManager = ({ lang, texts }) => {
   const [versions, setVersions] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [newVersionName, setNewVersionName] = useState('');
@@ -88,24 +88,24 @@ const VersionManager = () => {
       });
       
       if (response.ok) {
-        message.success('Versión creada exitosamente');
+        message.success(texts.versionManager.successCreate);
         setIsModalVisible(false);
         setNewVersionName('');
         loadVersions();
       }
     } catch (error) {
-      message.error('Error al crear la versión');
+      message.error('Error creating version');
     }
   };
 
   const showDeleteConfirm = (version) => {
     confirm({
-      title: '¿Estás seguro de eliminar esta versión?',
+      title: texts.versionManager.deleteConfirmTitle,
       icon: <ExclamationCircleOutlined />,
-      content: 'Esta acción no se puede deshacer y eliminará permanentemente la versión.',
-      okText: 'Sí, eliminar',
+      content: texts.versionManager.deleteConfirmContent,
+      okText: texts.versionManager.deleteConfirmYes,
       okType: 'danger',
-      cancelText: 'Cancelar',
+      cancelText: texts.versionManager.deleteConfirmCancel,
       onOk: () => handleDeleteVersion(version.id)
     });
   };
@@ -117,17 +117,17 @@ const VersionManager = () => {
   const handleDeleteVersion = async (versionId) => {
     try {
       await versionService.deleteVersion(versionId);
-      message.success('Versión eliminada correctamente');
+      message.success('Version deleted successfully');
       loadVersions();
     } catch (error) {
-      message.error('Error al eliminar la versión');
+      message.error('Error deleting version');
     }
   };
 
   const switchVersion = async (versionId) => {
     try {
       await versionService.switchVersion(versionId);
-      message.success('Versión activada correctamente');
+      message.success('Version activated successfully');
       setActiveVersionId(versionId);
       
       setTimeout(() => {
@@ -138,17 +138,26 @@ const VersionManager = () => {
         }
       }, 1000);
     } catch (error) {
-      message.error('Error al cambiar de versión');
+      message.error('Error switching version');
     }
   };
 
   const renderChanges = (changes) => {
     if (!changes || !Array.isArray(changes) || changes.length === 0) {
-      return <li>No hay cambios registrados para esta versión</li>;
+      return <li className="text-gray-400 italic">{texts.versionManager.noChangesRegistered}</li>;
     }
-    return changes.map((change, index) => (
-      <li key={index}>{change}</li>
-    ));
+    return (
+      <ul className="space-y-2 max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+        {changes.map((change, index) => (
+          <li
+            key={index}
+            className="bg-gray-50 rounded-lg shadow-sm px-3 py-2 text-gray-700 text-sm border border-gray-200"
+          >
+            {change}
+          </li>
+        ))}
+      </ul>
+    );
   };
 
   if (!isInitialized) {
@@ -163,7 +172,7 @@ const VersionManager = () => {
     <Card
       title={
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <Text strong>Version Management</Text>
+          <Text strong>{texts.versionManager.title}</Text>
           <Space
             direction="vertical"
             size={0}
@@ -200,7 +209,7 @@ const VersionManager = () => {
                 }}
               >
                 <HomeOutlined style={{ marginRight: 8 }} />
-                Auto Redirect
+                {texts.versionManager.autoRedirect}
               </Text>
             </div>
             <div
@@ -216,7 +225,7 @@ const VersionManager = () => {
                 letterSpacing: -0.3,
               }}
             >
-              When switching version
+              {texts.versionManager.switchVersion}
             </div>
           </Space>
         </div>
@@ -229,103 +238,106 @@ const VersionManager = () => {
         onClick={() => setIsModalVisible(true)}
         style={{ marginBottom: 16 }}
       >
-        Create New Version
+        {texts.versionManager.createNew}
       </Button>
 
       <List
+        grid={{ gutter: 24, xs: 1, sm: 1, md: 2, lg: 2, xl: 2, xxl: 2 }}
         dataSource={versions}
         renderItem={version => (
-          <List.Item
-            actions={[
-              <div style={{ width: '40px', display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  type="primary"
-                  icon={<InfoCircleOutlined />}
-                  onClick={() => showVersionInfo(version)}
-                />
-              </div>,
-              <div style={{ width: '80px', display: 'flex', justifyContent: 'center' }}>
-                {activeVersionId === version.id ? (
+          <List.Item>
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 flex flex-col justify-between transition-transform hover:scale-[1.02] hover:shadow-2xl duration-200">
+              <List.Item.Meta
+                title={version.name}
+                description={`${texts.versionManager.version}: ${version.version}`}
+              />
+              <div className="flex flex-col md:flex-row md:justify-end items-center mt-4 gap-2 md:gap-4 w-full">
+                <div style={{ width: '40px', display: 'flex', justifyContent: 'center' }}>
                   <Button
                     type="primary"
-                    style={{
-                      backgroundColor: '#52c41a',
-                      borderColor: '#52c41a',
-                      color: 'white',
-                      cursor: 'default',
-                      width: '100%'
-                    }}
-                    icon={<CheckCircleOutlined />}
-                  >
-                    Active
-                  </Button>
-                ) : (
+                    icon={<InfoCircleOutlined />}
+                    onClick={() => showVersionInfo(version)}
+                  />
+                </div>
+                <div style={{ width: '80px', display: 'flex', justifyContent: 'center' }}>
+                  {activeVersionId === version.id ? (
+                    <Button
+                      type="primary"
+                      style={{
+                        backgroundColor: '#52c41a',
+                        borderColor: '#52c41a',
+                        color: 'white',
+                        cursor: 'default',
+                        width: '100px',
+                      }}
+                      icon={<CheckCircleOutlined />}
+                    >
+                      {texts.versionManager.active}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="primary"
+                      onClick={() => switchVersion(version.id)}
+                      style={{ 
+                        width: '100%',
+                        backgroundColor: 'transparent',
+                        borderColor: '#52c41a',
+                        color: '#52c41a',
+                        width: '100px',
+                      }}
+                      icon={<CheckCircleOutlined />}
+                    >
+                      {texts.versionManager.activate}
+                    </Button>
+                  )}
+                </div>
+                <div style={{ width: '80px', display: 'flex', justifyContent: 'center' }}>
                   <Button
-                    type="primary"
-                    onClick={() => switchVersion(version.id)}
-                    style={{ 
-                      width: '100%',
-                      backgroundColor: 'transparent',
-                      borderColor: '#52c41a',
-                      color: '#52c41a'
-                    }}
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() => showDeleteConfirm(version)}
+                    disabled={activeVersionId === version.id}
+                    style={{ width: '100%' }}
                   >
-                    Activate
+                    {texts.versionManager.delete}
                   </Button>
-                )}
-              </div>,
-              <div style={{ width: '80px', display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  danger
-                  onClick={() => showDeleteConfirm(version)}
-                  disabled={activeVersionId === version.id}
-                  style={{ width: '100%' }}
-                >
-                  Delete
-                </Button>
+                </div>
               </div>
-            ]}
-          >
-            <List.Item.Meta
-              title={version.name}
-              description={`Version ${version.version}`}
-            />
+            </div>
           </List.Item>
         )}
       />
 
       <Modal
-        title="Create New Version"
+        title={texts.versionManager.createNewModalTitle}
         open={isModalVisible}
         onOk={createNewVersion}
         onCancel={() => setIsModalVisible(false)}
       >
         <Input
-          placeholder="Version name"
+          placeholder={texts.versionManager.versionNamePlaceholder}
           value={newVersionName}
           onChange={(e) => setNewVersionName(e.target.value)}
         />
       </Modal>
 
       <Modal
-        title="Version Info"
+        title={texts.versionManager.versionInfoTitle}
         open={!!selectedVersionInfo}
         onCancel={() => setSelectedVersionInfo(null)}
         footer={[
           <Button key="close" onClick={() => setSelectedVersionInfo(null)}>
-            Close
+            {texts.versionManager.close}
           </Button>
         ]}
       >
         {selectedVersionInfo && (
           <div>
             <h3>{selectedVersionInfo.name}</h3>
-            <p>Version: {selectedVersionInfo.version}</p>
-            <p>Created: {new Date(selectedVersionInfo.createdAt).toLocaleString()}</p>
-            <h4>Changes:</h4>
-            <ul>
-              {renderChanges(selectedVersionInfo.changes)}
-            </ul>
+            <p>{texts.versionManager.version}: {selectedVersionInfo.version}</p>
+            <p>{texts.versionManager.created}: {new Date(selectedVersionInfo.createdAt).toLocaleString()}</p>
+            <h4>{texts.versionManager.changes}:</h4>
+            {renderChanges(selectedVersionInfo.changes)}
           </div>
         )}
       </Modal>

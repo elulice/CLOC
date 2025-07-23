@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 
-const TestErrorHandling = () => {
+const TestErrorHandling = ({ lang, texts }) => {
   // Estados con valores iniciales definidos
   const [errorType, setErrorType] = useState('normal');
   const [isLoading, setIsLoading] = useState(false);
@@ -111,49 +111,49 @@ const TestErrorHandling = () => {
           onClick={() => simulateError('timeout')}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Simular Timeout
+          {texts.testErrorHandling.simulateTimeout}
         </button>
         <button
           onClick={() => simulateError('error')}
           className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
         >
-          Simular Error
+          {texts.testErrorHandling.simulateError}
         </button>
         <button
           onClick={() => simulateError('invalid')}
           className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
         >
-          Simular Error de Propiedad
+          {texts.testErrorHandling.simulateInvalid}
         </button>
         <button
           onClick={() => simulateError('heavy')}
           className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
         >
-          Simular Carga Pesada
+          {texts.testErrorHandling.simulateHeavy}
         </button>
         <button
           onClick={handleRetry}
           className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
         >
-          Reiniciar
+          {texts.testErrorHandling.retry}
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 bg-white rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Métricas de Errores</h3>
+          <h3 className="text-lg font-semibold mb-4">{texts.testErrorHandling.metricsTitle}</h3>
           <div className="space-y-2">
-            <p>Total de errores: {metrics.totalErrors}</p>
+            <p>{texts.testErrorHandling.totalErrors}: {metrics.totalErrors}</p>
             {metrics.lastError && (
               <div>
-                <p>Último error: {metrics.lastError.message}</p>
+                <p>{texts.testErrorHandling.lastError}: {metrics.lastError.message}</p>
                 <p className="text-sm text-gray-500">
                   {new Date(metrics.lastError.timestamp).toLocaleString()}
                 </p>
               </div>
             )}
             <div>
-              <p className="font-medium">Tipos de error:</p>
+              <p className="font-medium">{texts.testErrorHandling.errorTypes}:</p>
               <ul className="list-disc list-inside">
                 {Object.entries(metrics.errorTypes).map(([type, count]) => (
                   <li key={type}>
@@ -166,15 +166,15 @@ const TestErrorHandling = () => {
         </div>
 
         <div className="p-4 bg-white rounded-lg shadow">
-          <h3 className="text-lg font-semibold mb-4">Estado Actual</h3>
+          <h3 className="text-lg font-semibold mb-4">{texts.testErrorHandling.currentState}</h3>
           <div className="space-y-2">
-            <p>Tipo de error: {errorType}</p>
-            <p>Estado: {isLoading ? 'Cargando...' : 'Listo'}</p>
+            <p>{texts.testErrorHandling.errorType}: {errorType}</p>
+            <p>{texts.testErrorHandling.status}: {isLoading ? texts.testErrorHandling.loading : texts.testErrorHandling.ready}</p>
             {heavyContent.length > 0 && (
-              <p>Elementos cargados: {heavyContent.length}</p>
+              <p>{texts.testErrorHandling.loadedElements}: {heavyContent.length}</p>
             )}
             {invalidObject && (
-              <p>Objeto inválido presente</p>
+              <p>{texts.testErrorHandling.invalidObject}</p>
             )}
           </div>
         </div>

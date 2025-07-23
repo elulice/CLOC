@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SectionContent = ({ title, description, imageUrl }) => {
+const SectionContent = ({ title, description, imageUrl, texts }) => {
   return (
     <div className="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
       {imageUrl && (
@@ -17,7 +17,7 @@ const SectionContent = ({ title, description, imageUrl }) => {
         <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 break-words">{title}</h3>
         <p className="text-base sm:text-lg text-gray-700 leading-relaxed break-words">{description}</p>
         <button className="mt-5 sm:mt-6 bg-black text-white py-2 sm:py-3 px-6 sm:px-8 rounded-full hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl w-full sm:w-auto">
-          Explore more
+          {texts.sectionContent.exploreMore}
         </button>
       </div>
     </div>
